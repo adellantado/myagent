@@ -15,9 +15,14 @@ def save_content_to_file(filename: str, content: str) -> str:
     Returns a success message with the filename or an error message.
     """
     try:
+        filename = f"scripts/{filename}"
         with open(filename, "w") as f:
             f.write(content)
-        return f"Successfully saved content to '{os.path.abspath(filename)}'."
+        return {
+            "status": "success",
+            "message": f"Successfully saved content to '{os.path.abspath(filename)}",
+            "script_path": os.path.abspath(filename),
+        }
     except Exception as e:
         return f"Error saving file '{filename}': {e}"
     
@@ -30,8 +35,8 @@ def setup_python_environment_and_install_deps(requirements_content: str, asset_a
     'asset_api_identifier' is used to name the virtual environment uniquely (e.g., "AAPL", "bitcoin").
     Returns a dictionary with the path to the virtual environment's Python interpreter and status.
     """
-    venv_name = f"venv_{asset_api_identifier.replace('-', '_')}"
-    requirements_filename = f"requirements_{asset_api_identifier.replace('-', '_')}.txt"
+    venv_name = f"scripts/venv_{asset_api_identifier.replace('-', '_')}"
+    requirements_filename = f"scripts/requirements_{asset_api_identifier.replace('-', '_')}.txt"
 
     try:
         # Save temporary requirements file
@@ -73,12 +78,12 @@ def setup_python_environment_and_install_deps(requirements_content: str, asset_a
 
         print(f"Dependencies installed successfully in '{venv_name}'.")
         # Clean up temp requirements file
-        os.remove(requirements_filename)
+        # os.remove(requirements_filename)
 
         return {
             "status": "success",
             "message": f"Environment '{venv_name}' setup with dependencies. Python at: {python_executable}",
-            "venv_python_path": os.path.abspath(python_executable)
+            "venv_python_path": os.path.abspath(python_executable),
         }
 
     except Exception as e:
@@ -96,6 +101,8 @@ def execute_script(script_path: str, venv_python_path: str, run_argument: str) -
     Returns the output of the script (stdout).
     """
     try:
+        venv_python_path = f"{venv_python_path}"
+        script_path = f"{script_path}"
         print(f"Executing script: {venv_python_path} {script_path} {run_argument}")
         # IMPORTANT SECURITY NOTE: subprocess.run executes the generated script.
         # Ensure you trust the script's origin and content.
