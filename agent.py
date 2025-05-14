@@ -10,6 +10,7 @@ from tools import (
     save_content_to_file,
     setup_python_environment_and_install_deps,
     execute_script,
+    notify_via_telegram,
 )
 
 load_dotenv()
@@ -26,12 +27,14 @@ def create_asset_pricer_agent():
         save_content_to_file,
         setup_python_environment_and_install_deps,
         execute_script,
+        notify_via_telegram,
     ]
 
     # Define the prompt for the agent
     # This prompt needs to guide the LLM to use the tools in sequence.
     prompt_template = ChatPromptTemplate.from_messages([
-        ("system", """You are a helpful assistant that helps users to building python scripts to automate different tasks on a pc.
+        ("system", """You are a helpful assistant that helps users building python scripts to automate different tasks on a pc.
+        Also you can run the scripts you build.
         You have access to the following tools:
         {{tools}}
          
@@ -43,6 +46,10 @@ def create_asset_pricer_agent():
         5.  If the script requires any additional input, ask the user for it.
         6.  If the script generates any output, return it to the user.
         7.  If the script fails, report the error to the user.
+        
+        To run existing scripts, you must:
+        1. Call `execute_script` to run the script in the virtual environment.
+        2. If needed notify the user about results with `notify_via_telegram` tool, add a header description about what was sent, apply beautiful formatting.
 
         Use the tool_names and tool_input arguments correctly.
         """),
